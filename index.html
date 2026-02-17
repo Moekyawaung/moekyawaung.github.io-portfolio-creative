@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Moe Kyaw Aung — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #F8F6F2;
+  --ink: #111110;
+  --muted: #7a7870;
+  --accent: #B07D5A;
+  --line: #E0DDD8;
+  --cream: #EFEDE8;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  overflow-x: hidden;
+}
+::selection { background: var(--ink); color: var(--bg); }
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-thumb { background: var(--accent); }
+
+/* ── LOADER ── */
+#loader {
+  position: fixed; inset: 0; z-index: 9999;
+  background: var(--ink);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.6s ease, visibility 0.6s ease;
+}
+#loader.hide { opacity: 0; visibility: hidden; }
+.loader-text {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 300;
+  color: var(--bg);
+  letter-spacing: 0.1em;
+  overflow: hidden;
+}
+.loader-text span {
+  display: inline-block;
+  animation: loaderUp 1s cubic-bezier(.76,0,.24,1) both;
+}
+.loader-bar {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 3px;
+  background: var(--accent);
+  animation: loadBar 1.8s ease forwards;
+}
+@keyframes loaderUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+@keyframes loadBar { from { width: 0; } to { width: 100%; } }
+
+/* ── CURSOR ── */
+* { cursor: none !important; }
+.cur-dot {
+  position: fixed; z-index: 9000; pointer-events: none;
+  width: 6px; height: 6px;
+  background: var(--ink); border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s, background 0.3s;
+}
+.cur-ring {
+  position: fixed; z-index: 8999; pointer-events: none;
+  width: 36px; height: 36px;
+  border: 1px solid rgba(17,17,16,0.4);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s, height 0.4s, border-color 0.4s;
+}
+.cur-ring.hovering { width: 60px; height: 60px; border-color: var(--accent); }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+  padding: 28px 56px;
+  display: flex; align-items: center; justify-content: space-between;
+  transition: background 0.5s, padding 0.5s;
+}
+nav.scrolled {
+  background: rgba(248,246,242,0.92);
+  backdrop-filter: blur(16px);
+  padding: 18px 56px;
+  border-bottom: 1px solid var(--line);
+}
+.nav-logo {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 300;
+  letter-spacing: 0.08em;
+  color: var(--ink); text-decoration: none;
+  display: flex; flex-direction: column; gap: 1px;
+}
+.nav-logo small {
+  font-size: 10px; letter-spacing: 0.22em;
+  text-transform: uppercase; color: var(--muted);
+  font-family: 'Inter', sans-serif;
+}
+.nav-links { list-style: none; display: flex; gap: 40px; }
+.nav-links a {
+  font-size: 11px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--muted);
+  text-decoration: none; transition: color 0.3s;
+  position: relative;
+}
+.nav-links a::after {
+  content: ''; position: absolute;
+  bottom: -3px; left: 0; right: 0;
+  height: 1px; background: var(--accent);
+  transform: scaleX(0); transform-origin: right;
+  transition: transform 0.4s cubic-bezier(.76,0,.24,1);
+}
+.nav-links a:hover { color: var(--ink); }
+.nav-links a:hover::after { transform: scaleX(1); transform-origin: left; }
+.nav-avail {
+  font-size: 11px; letter-spacing: 0.12em;
+  color: var(--accent); display: flex; align-items: center; gap: 8px;
+}
+.nav-avail::before {
+  content: ''; width: 6px; height: 6px;
+  background: var(--accent); border-radius: 50%;
+  animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(1.5)} }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  display: grid; grid-template-rows: 1fr auto;
+  padding: 120px 56px 60px;
+  position: relative; overflow: hidden;
+}
+.hero-bg {
+  position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 20%, rgba(176,125,90,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 60% at 10% 80%, rgba(176,125,90,0.05) 0%, transparent 50%);
+}
+.hero-line {
+  position: absolute; background: var(--line);
+  animation: growLine 1.5s 1.8s cubic-bezier(.76,0,.24,1) both;
+}
+.hero-line-h { height: 1px; left: 0; right: 0; top: 50%; }
+.hero-line-v { width: 1px; top: 0; bottom: 0; left: 50%; }
+@keyframes growLine { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+
+.hero-inner { position: relative; z-index: 1; }
+.hero-label {
+  font-size: 11px; letter-spacing: 0.28em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 32px;
+  overflow: hidden;
+}
+.hero-label span {
+  display: inline-block;
+  animation: slideUp 0.8s 1.8s cubic-bezier(.76,0,.24,1) both;
+}
+.hero-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(64px, 10vw, 140px);
+  font-weight: 300; line-height: 0.92;
+  letter-spacing: -0.02em;
+}
+.hero-name .word { overflow: hidden; display: block; }
+.hero-name .word span {
+  display: block;
+  animation: slideUp 1s cubic-bezier(.76,0,.24,1) both;
+}
+.hero-name .word:nth-child(1) span { animation-delay: 1.9s; }
+.hero-name .word:nth-child(2) span { animation-delay: 2.0s; color: var(--muted); font-style: italic; }
+.hero-name .word:nth-child(3) span { animation-delay: 2.1s; }
+
+.hero-sub {
+  margin-top: 40px; max-width: 520px;
+  font-size: 15px; line-height: 1.8; color: var(--muted);
+  opacity: 0; animation: fadeIn 1s 2.4s ease both;
+}
+.hero-actions {
+  margin-top: 56px; display: flex; gap: 24px; align-items: center;
+  opacity: 0; animation: fadeIn 1s 2.6s ease both;
+}
+.btn-main {
+  display: inline-flex; align-items: center; gap: 12px;
+  padding: 16px 40px;
+  background: var(--ink); color: var(--bg);
+  text-decoration: none; font-size: 11px;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  transition: background 0.4s, transform 0.3s;
+  position: relative; overflow: hidden;
+}
+.btn-main::before {
+  content: ''; position: absolute;
+  inset: 0; background: var(--accent);
+  transform: translateX(-101%);
+  transition: transform 0.4s cubic-bezier(.76,0,.24,1);
+}
+.btn-main:hover::before { transform: translateX(0); }
+.btn-main span { position: relative; z-index: 1; }
+.btn-ghost {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-size: 11px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--muted);
+  text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 4px;
+  transition: color 0.3s, border-color 0.3s;
+}
+.btn-ghost:hover { color: var(--ink); border-color: var(--ink); }
+
+.hero-footer {
+  position: relative; z-index: 1;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  border-top: 1px solid var(--line); padding-top: 32px;
+  opacity: 0; animation: fadeIn 1s 2.8s ease both;
+}
+.hero-stats { display: flex; gap: 56px; }
+.hero-stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 40px; font-weight: 300; line-height: 1; display: block;
+}
+.hero-stat-label {
+  font-size: 10px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--muted); margin-top: 4px; display: block;
+}
+.hero-scroll {
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted);
+}
+.scroll-line {
+  width: 1px; height: 48px; background: var(--line);
+  position: relative; overflow: hidden;
+}
+.scroll-line::after {
+  content: ''; position: absolute;
+  top: -100%; left: 0; right: 0; height: 100%;
+  background: var(--accent);
+  animation: scrollAnim 2s ease-in-out infinite;
+}
+@keyframes scrollAnim { 0%{top:-100%} 100%{top:100%} }
+
+/* ── SECTIONS ── */
+.section { padding: 120px 56px; }
+.section-inner { max-width: 1200px; margin: 0 auto; }
+
+.section-label {
+  display: flex; align-items: center; gap: 20px;
+  font-size: 10px; letter-spacing: 0.3em;
+  text-transform: uppercase; color: var(--accent);
+  margin-bottom: 72px;
+}
+.section-label::before {
+  content: attr(data-num);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 18px; color: var(--line);
+}
+.section-label::after { content: ''; flex: 1; height: 1px; background: var(--line); }
+
+/* About */
+.about-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 100px; align-items: start; }
+.about-portrait {
+  position: sticky; top: 120px;
+  aspect-ratio: 4/5;
+  background: var(--cream);
+  overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+}
+.portrait-inner {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, var(--cream) 0%, #ddd8d0 100%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 80px; font-weight: 300; color: rgba(17,17,16,0.08);
+  letter-spacing: -0.04em;
+}
+.about-content h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(36px, 4vw, 60px);
+  font-weight: 300; line-height: 1.15; margin-bottom: 32px;
+}
+.about-content h2 em { font-style: italic; color: var(--muted); }
+.about-content p { color: var(--muted); line-height: 1.9; margin-bottom: 20px; font-size: 15px; }
+.about-tags { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 40px; }
+.about-tag {
+  font-size: 11px; padding: 8px 18px;
+  border: 1px solid var(--line); color: var(--muted);
+  letter-spacing: 0.08em; transition: all 0.3s;
+}
+.about-tag:hover { border-color: var(--ink); color: var(--ink); }
+.about-tag.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+
+/* Projects */
+.proj-list { display: flex; flex-direction: column; }
+.proj-item {
+  display: grid; grid-template-columns: 64px 1fr 160px auto;
+  align-items: center; gap: 32px;
+  padding: 40px 0;
+  border-bottom: 1px solid var(--line);
+  text-decoration: none; color: inherit;
+  transition: padding 0.4s;
+  position: relative; overflow: hidden;
+}
+.proj-item::before {
+  content: ''; position: absolute;
+  inset: 0; background: var(--cream);
+  transform: translateX(-101%);
+  transition: transform 0.5s cubic-bezier(.76,0,.24,1);
+  z-index: 0;
+}
+.proj-item:hover::before { transform: translateX(0); }
+.proj-item:hover { padding: 40px 24px; }
+.proj-item > * { position: relative; z-index: 1; }
+.proj-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 20px; font-weight: 300; color: var(--line);
+}
+.proj-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 300;
+}
+.proj-tags-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.proj-tag-sm {
+  font-size: 10px; letter-spacing: 0.1em;
+  padding: 4px 10px; border: 1px solid var(--line);
+  color: var(--muted);
+}
+.proj-arrow {
+  font-size: 24px; color: var(--muted);
+  transition: transform 0.4s, color 0.3s;
+}
+.proj-item:hover .proj-arrow { transform: translate(6px, -6px); color: var(--ink); }
+
+/* Contact */
+.contact-split { display: grid; grid-template-columns: 1fr 1fr; gap: 100px; align-items: end; }
+.contact-cta h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(40px, 5vw, 72px);
+  font-weight: 300; line-height: 1.1; margin-bottom: 28px;
+}
+.contact-cta h2 em { font-style: italic; color: var(--muted); }
+.contact-cta p { color: var(--muted); line-height: 1.8; font-size: 15px; margin-bottom: 40px; }
+.contact-links-list { list-style: none; }
+.contact-links-list li + li { margin-top: 2px; }
+.contact-links-list a {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 20px 0;
+  border-top: 1px solid var(--line);
+  color: inherit; text-decoration: none;
+  font-size: 13px; letter-spacing: 0.08em;
+  transition: padding 0.4s;
+}
+.contact-links-list a:hover { padding: 20px 16px; color: var(--accent); }
+.contact-links-list a span:last-child { color: var(--muted); transition: transform 0.3s; }
+.contact-links-list a:hover span:last-child { transform: translate(4px, -4px); color: var(--accent); }
+
+/* Footer */
+footer {
+  padding: 40px 56px;
+  border-top: 1px solid var(--line);
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 11px; letter-spacing: 0.1em; color: var(--muted);
+}
+
+/* Animations */
+@keyframes slideUp { from { transform: translateY(110%); } to { transform: translateY(0); } }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.reveal {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity 0.9s cubic-bezier(.76,0,.24,1), transform 0.9s cubic-bezier(.76,0,.24,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+@media (max-width: 768px) {
+  nav { padding: 20px 24px; }
+  nav.scrolled { padding: 14px 24px; }
+  .nav-links, .nav-avail { display: none; }
+  .hero { padding: 100px 24px 48px; }
+  .section { padding: 80px 24px; }
+  .about-grid { grid-template-columns: 1fr; }
+  .about-portrait { display: none; }
+  .proj-item { grid-template-columns: auto 1fr auto; }
+  .proj-tags-row { display: none; }
+  .contact-split { grid-template-columns: 1fr; }
+  footer { padding: 28px 24px; flex-direction: column; gap: 12px; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="loader">
+  <div class="loader-text">
+    <span>M</span><span>K</span><span>A</span>
+  </div>
+  <div class="loader-bar"></div>
+</div>
+
+<!-- Cursor -->
+<div class="cur-dot" id="curDot"></div>
+<div class="cur-ring" id="curRing"></div>
+
+<!-- Nav -->
+<nav id="nav">
+  <a href="#" class="nav-logo">
+    Moe Kyaw Aung
+    <small>Developer & Designer</small>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="nav-avail">Available for Freelance</div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-line hero-line-h"></div>
+
+  <div class="hero-inner">
+    <div class="hero-label"><span>Android · Data Viz · Web — Tachileik, Myanmar</span></div>
+    <h1 class="hero-name">
+      <span class="word"><span>Moe</span></span>
+      <span class="word"><span>Kyaw</span></span>
+      <span class="word"><span>Aung</span></span>
+    </h1>
+    <p class="hero-sub">
+      Building clean, functional digital experiences — from native Android apps with Jetpack Compose, to interactive R dashboards, to responsive web design.
+    </p>
+    <div class="hero-actions">
+      <a href="#work" class="btn-main"><span>View Work</span> <span>→</span></a>
+      <a href="https://github.com/Moekyawaung" target="_blank" class="btn-ghost">GitHub ↗</a>
+    </div>
+  </div>
+
+  <div class="hero-footer">
+    <div class="hero-stats">
+      <div>
+        <span class="hero-stat-num">3+</span>
+        <span class="hero-stat-label">Years Coding</span>
+      </div>
+      <div>
+        <span class="hero-stat-num">10+</span>
+        <span class="hero-stat-label">Projects Built</span>
+      </div>
+      <div>
+        <span class="hero-stat-num">3</span>
+        <span class="hero-stat-label">Tech Stacks</span>
+      </div>
+    </div>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      Scroll
+    </div>
+  </div>
+</section>
+
+<!-- About -->
+<section class="section" id="about">
+  <div class="section-inner">
+    <div class="section-label" data-num="01">About Me</div>
+    <div class="about-grid">
+      <div class="about-portrait reveal">
+        <div class="portrait-inner">MKA</div>
+      </div>
+      <div class="about-content">
+        <h2 class="reveal">
+          Three stacks.<br>
+          One <em>developer</em>.<br>
+          Zero compromises.
+        </h2>
+        <p class="reveal reveal-delay-1">
+          I'm Moe Kyaw Aung — an Android developer, web designer, and data visualization specialist based in Tachileik, Myanmar. With 3+ years of experience, I bring ideas to life across mobile, web, and data.
+        </p>
+        <p class="reveal reveal-delay-2">
+          My Android work leverages Kotlin, Jetpack Compose, and MVVM architecture to build elegant, performant apps. My data work uses R's rich ecosystem — ggplot2 and Shiny — to transform raw numbers into meaningful visuals.
+        </p>
+        <div class="about-tags reveal reveal-delay-3">
+          <span class="about-tag active">Kotlin</span>
+          <span class="about-tag active">Jetpack Compose</span>
+          <span class="about-tag">MVVM</span>
+          <span class="about-tag">Material 3</span>
+          <span class="about-tag">R</span>
+          <span class="about-tag">ggplot2</span>
+          <span class="about-tag">Shiny</span>
+          <span class="about-tag">Jekyll</span>
+          <span class="about-tag">CSS3</span>
+          <span class="about-tag">GitHub Pages</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Work -->
+<section class="section" id="work" style="padding-top: 0;">
+  <div class="section-inner">
+    <div class="section-label" data-num="02">Selected Work</div>
+    <div class="proj-list">
+      <a href="https://github.com/Moekyawaung" target="_blank" class="proj-item reveal">
+        <span class="proj-num">01</span>
+        <div>
+          <div class="proj-name">Android Portfolio App</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Modern Android app with clean architecture</div>
+        </div>
+        <div class="proj-tags-row">
+          <span class="proj-tag-sm">Kotlin</span>
+          <span class="proj-tag-sm">Compose</span>
+          <span class="proj-tag-sm">MVVM</span>
+        </div>
+        <span class="proj-arrow">↗</span>
+      </a>
+      <a href="#" class="proj-item reveal reveal-delay-1">
+        <span class="proj-num">02</span>
+        <div>
+          <div class="proj-name">Data Visualization Dashboard</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Interactive charts for academic use cases</div>
+        </div>
+        <div class="proj-tags-row">
+          <span class="proj-tag-sm">R</span>
+          <span class="proj-tag-sm">ggplot2</span>
+          <span class="proj-tag-sm">Shiny</span>
+        </div>
+        <span class="proj-arrow">↗</span>
+      </a>
+      <a href="https://moekyawaung.github.io/" target="_blank" class="proj-item reveal reveal-delay-2">
+        <span class="proj-num">03</span>
+        <div>
+          <div class="proj-name">Academic Portfolio Site</div>
+          <div style="font-size:12px;color:var(--muted);margin-top:4px">Glassmorphism Jekyll site on GitHub Pages</div>
+        </div>
+        <div class="proj-tags-row">
+          <span class="proj-tag-sm">Jekyll</span>
+          <span class="proj-tag-sm">CSS3</span>
+          <span class="proj-tag-sm">Responsive</span>
+        </div>
+        <span class="proj-arrow">↗</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- Contact -->
+<section class="section" id="contact">
+  <div class="section-inner">
+    <div class="section-label" data-num="03">Get in Touch</div>
+    <div class="contact-split">
+      <div class="contact-cta reveal">
+        <h2>
+          Let's create<br>
+          <em>something</em><br>
+          remarkable.
+        </h2>
+        <p>Open to freelance projects, collaborations, and full-time opportunities. Based in Tachileik, Myanmar — available remotely worldwide.</p>
+        <a href="https://moekyawaung.github.io/#contact" target="_blank" class="btn-main">
+          <span>Hire Me</span> <span>→</span>
+        </a>
+      </div>
+      <div class="reveal reveal-delay-1">
+        <ul class="contact-links-list">
+          <li>
+            <a href="https://github.com/Moekyawaung" target="_blank">
+              <span>GitHub</span> <span>↗</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://moekyawaung.github.io/#contact" target="_blank">
+              <span>Hire Me / Contact</span> <span>↗</span>
+            </a>
+          </li>
+          <li>
+            <a href="https://moekyawaung.github.io/" target="_blank">
+              <span>Main Portfolio</span> <span>↗</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <span>© 2024 Moe Kyaw Aung — Tachileik, Myanmar</span>
+  <span>Android · Data Viz · Web</span>
+</footer>
+
+<script>
+// Loader
+window.addEventListener('load', () => {
+  setTimeout(() => document.getElementById('loader').classList.add('hide'), 2000);
+});
+
+// Cursor
+const dot = document.getElementById('curDot');
+const ring = document.getElementById('curRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => {
+  mx = e.clientX; my = e.clientY;
+  dot.style.left = mx + 'px'; dot.style.top = my + 'px';
+});
+(function loop() {
+  rx += (mx - rx) * 0.12; ry += (my - ry) * 0.12;
+  ring.style.left = rx + 'px'; ring.style.top = ry + 'px';
+  requestAnimationFrame(loop);
+})();
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => ring.classList.add('hovering'));
+  el.addEventListener('mouseleave', () => ring.classList.remove('hovering'));
+});
+
+// Nav scroll
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// Reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
